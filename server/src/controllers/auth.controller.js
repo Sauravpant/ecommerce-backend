@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     throw new AppError(400, "User already exists");
   }
-  const profilePicturePath = req.file?.profilePicture?.[0]?.path;
+  const profilePicturePath = req.file?.path;
   if (!profilePicturePath) {
     throw new AppError(400, "Profile Picture is required");
   }
@@ -43,7 +43,8 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password,
-    profilePicture: profilePicture.url
+    profilePicture: profilePicture.secure_url,
+    imageId: profilePicture.public_id
   });
   const createdUser = await User.findById(user._id).select("-password -refreshToken");
   if (!createdUser) {
@@ -77,7 +78,7 @@ const logInUser = asyncHandler(async (req, res) => {
 
 const logOutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(req.user._id, {
-    $unset: { refreshToken: 1 }
+    $unset: { refreshToken: undefined}
   }, { new: true });
   const options = { httpOnly: true, secure: true };
   return res.status(200)
@@ -118,7 +119,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   if (!newPassword?.trim() || !oldPassword?.trim()) {
     throw new AppError(400, "Fields cannot be empty");
   }
-  const user = await User.findById(req.user?._id).select("-password -refreshToken");
+  const user = await User.findById(req.user?._id).select("+password -refreshToken");
   const isPasswordValid = await user.comparePassword(oldPassword);
   if (!isPasswordValid) {
     throw new AppError(400, "Password doesnt match")
