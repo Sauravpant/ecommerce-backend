@@ -19,11 +19,19 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    select:false
   },
   refreshToken: {
     type: String,
-    required: true
+  },
+  profilePicture: {
+    type: String,
+    rewuired: true
+  },
+  
+  imageId: {
+    type: String,
   },
   isAdmin: {
     type: Boolean,
@@ -32,7 +40,7 @@ const userSchema = new Schema({
 }, { timestamps: true })
 
 
-userSchema.pre("save", async function (next) {  //Using bcrypt tp hash the password before saving into the database
+userSchema.pre("save", async function (next) {  
   if (!(this.isModified("password"))) next();
   else {
     this.password = await bcrypt.hash(this.password, 10);

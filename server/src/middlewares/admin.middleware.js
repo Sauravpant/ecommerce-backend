@@ -1,6 +1,6 @@
 import { User } from "../models/user.models.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import AppError from "../utils/AppError.js";
+import {AppError} from "../utils/AppError.js";
 import jwt from "jsonwebtoken"
 
 const verifyAdmin = asyncHandler(async (req, res, next) => {

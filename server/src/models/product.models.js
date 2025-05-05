@@ -25,6 +25,10 @@ const productSchema = new Schema({
     type: String,  //Cloudinaary url
     required: true
   },
+  imageId: {
+    type: String,
+    required: true
+  },
   ratings: {
     type: Number,
     default: 0
