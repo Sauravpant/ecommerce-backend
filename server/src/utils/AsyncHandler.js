@@ -1,4 +1,4 @@
-const asyncHandler = async (func) => {
+const asyncHandler = (func) => {
   return (req, res, next) => {
     Promise
       .resolve(func(req, res, next))
@@ -8,4 +8,4 @@ const asyncHandler = async (func) => {
   }
 }
 
-export {asyncHandler}
+export { asyncHandler }

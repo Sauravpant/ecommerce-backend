@@ -1,11 +1,10 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs"
-import { asyncHandler } from './AsyncHandler';
 
 cloudinary.config({
-  cloud_name: 'my_cloud_name',
-  api_key: 'my_key',
-  api_secret: 'my_secret'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 
 export const uploadToCloudinary = async (filePath) => {
@@ -22,3 +21,14 @@ export const uploadToCloudinary = async (filePath) => {
     throw null;
   }
 };
+
+
+export const deleteFromCloudinary = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(publicId, {
+      resource_type: "auto",
+    });
+  } catch (error) {
+    throw null;
+  }
+}
