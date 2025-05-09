@@ -10,4 +10,5 @@ router.delete("/delete-product/:productId", verifyJWT, verifyAdmin, deleteProduc
 router.patch("/update-product/:productId", verifyJWT, verifyAdmin, updateProductDetails);
 router.get("/get-all-products", getAllProducts);
 router.get("/get-single-products/:productId", getSingleProduct);
+router.get("/get-filtered-products", getFilteredProducts);
 export default router;

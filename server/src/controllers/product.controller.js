@@ -1,8 +1,8 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AppError } from "../utils/AppError.js";
-import { Product } from "../models/product.models.js"
-import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary.js"
+import { Product } from "../models/product.models.js";
+import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary.js";
 
 
 const addProduct = asyncHandler(async (req, res) => {
@@ -31,14 +31,14 @@ const addProduct = asyncHandler(async (req, res) => {
     itemsInStock,
     image: uploadedImage.secure_url,
     imageId: uploadedImage.public_id
-  })
+  });
 
   if (!product) {
     throw new AppError(500, "Failed to add item to the database");
   }
 
   return res.status(200).json(new ApiResponse(200, "", "Item added successfully"));
-})
+});
 
 
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -60,14 +60,13 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
   return res.status(200).json(new ApiResponse(200, "", "Item deleted successfully"));
 
-})
+});
 
 
 const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({});
   return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"));
-
-})
+});
 
 
 const updateProductDetails = asyncHandler(async (req, res) => {
@@ -92,7 +91,7 @@ const updateProductDetails = asyncHandler(async (req, res) => {
   await product.save({ validateBeforeSave: false });
   return res.status(200).json(new ApiResponse(200, "Item updated successfully"));
 
-})
+});
 
 const getSingleProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
@@ -102,7 +101,27 @@ const getSingleProduct = asyncHandler(async (req, res) => {
   }
   return res.status(200).json(new ApiResponse(200, product, "Item fetched successfully"));
 
-})
+});
 
 
-export { addProduct, deleteProduct, updateProductDetails, getAllProducts, getSingleProduct };
+const getFilteredProducts = asyncHandler(async (req, res) => {
+  const { category, priceMin, priceMax, ratingMin } = req.query;
+
+  const filter = {};
+  if (category) {
+    filter.category = category;
+  }
+  if (priceMin || priceMax) {
+    filter.price = {};
+    if (priceMin) filter.price.$gte = priceMin;
+    if (priceMax) filter.price.$lte = priceMax;
+  }
+  if (ratingMin) {
+    filter.ratings = { $gte: ratingMin };
+  }
+
+  const products = await Product.find(filter);
+  return res.status(200).json(new ApiResponse(200, products, "Filtered products fetched successfully"));
+});
+
+export { addProduct, deleteProduct, updateProductDetails, getAllProducts, getSingleProduct, getFilteredProducts };
