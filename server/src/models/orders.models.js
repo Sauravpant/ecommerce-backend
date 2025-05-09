@@ -48,20 +48,16 @@ const orderSchema = new Schema({
 
   isDelivered: {
     type: Boolean,
-    required: true
+    default: false
   },
 
   deliveredAt: {
     type: Date
   },
-  taxPrice: {
-    type: Number,
-    default: 0.0
-  },
-
-  shippingPrice: {
-    type: Number,
-    default: 50
+  status: {
+    type: String,
+    enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+    default: 'Pending'
   }
 }, { timestamps: true })
 
